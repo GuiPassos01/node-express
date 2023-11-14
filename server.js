@@ -82,11 +82,30 @@ app.put('/api/students/:id', async (req, res) => {
 
         // Envia a resposta com status 204 (Sem Conteúdo)
         res.status(204)
-        } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500)
     }
 });
+
+app.delete('/api/students/:id', async (req, res) => {
+    try {
+        const studentId = req.params.id;
+
+        const connection = await pool.connect();
+
+        await connection.query(
+            "DELETE FROM students WHERE id = $1",
+            [studentId]
+        );
+        connection.release();
+
+        res.sendStatus(204);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Erro ao acessar o banco de dados.");
+    }
+})
 
 // Inicia o servidor
 app.listen(3000, () => {
